@@ -2655,7 +2655,11 @@ impl Shell {
     /// SPACE — one shared "" key made a canvas toggle read as global state
     /// (user report).
     fn panel_key(&self, cx: &App) -> String {
-        self.state.read(cx).panel_session_key()
+        if self.active_chat.is_empty() {
+            crate::state::canvas_panel_key(self.state.read(cx).selected_space.as_deref())
+        } else {
+            self.active_chat.clone()
+        }
     }
 
     /// Whether the right pane shows. NOT gated on git any more: the pane is
