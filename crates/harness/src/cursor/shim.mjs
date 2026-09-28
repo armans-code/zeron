@@ -622,9 +622,16 @@ function modelSelection(msg) {
 async function start(msg) {
   const model = modelSelection(msg);
   // The SDK loads NO ambient settings unless asked: without settingSources the
-  // user's/project's mcp.json, plugins and rules are invisible and the inline
-  // zeron server is the only MCP the agent sees. "all" matches the IDE/CLI.
-  const local = { cwd: msg.cwd || process.cwd(), enableAgentRetries: true, settingSources: ["all"] };
+  // user's ~/.cursor/mcp.json and plugins are invisible and the inline zeron
+  // server is the only MCP the agent sees. "project" (and so "all") is left
+  // out on purpose: the SDK hardcodes ignoreApprovals, so a repo's
+  // .cursor/mcp.json and .cursor/hooks.json would spawn their commands at chat
+  // start with none of the approval gating Cursor itself applies.
+  const local = {
+    cwd: msg.cwd || process.cwd(),
+    enableAgentRetries: true,
+    settingSources: ["user", "team", "mdm", "plugins"],
+  };
   // Isolated per-run store (see the header above). Resume looks the agent's
   // store up by marker; a markerless (pre-isolation) agent resumes from the
   // SDK's default store exactly as before.
