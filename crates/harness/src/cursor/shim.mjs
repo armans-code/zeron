@@ -621,7 +621,10 @@ function modelSelection(msg) {
 
 async function start(msg) {
   const model = modelSelection(msg);
-  const local = { cwd: msg.cwd || process.cwd(), enableAgentRetries: true };
+  // The SDK loads NO ambient settings unless asked: without settingSources the
+  // user's/project's mcp.json, plugins and rules are invisible and the inline
+  // zeron server is the only MCP the agent sees. "all" matches the IDE/CLI.
+  const local = { cwd: msg.cwd || process.cwd(), enableAgentRetries: true, settingSources: ["all"] };
   // Isolated per-run store (see the header above). Resume looks the agent's
   // store up by marker; a markerless (pre-isolation) agent resumes from the
   // SDK's default store exactly as before.

@@ -548,6 +548,7 @@ async fn mcp_injection_reaches_sdk_on_create_and_resume_with_fresh_identity() {
         assert_eq!(options["zeron"]["args"], serde_json::json!(["mcp"]));
         assert_eq!(options["zeron"]["env"]["ZERON_CHAT_ID"], chat);
         assert_eq!(options["zeron"]["env"]["ZERON_IPC_PORT"], "27699");
+        assert_eq!(options["settingSources"], serde_json::json!(["all"]));
     }
 }
 
