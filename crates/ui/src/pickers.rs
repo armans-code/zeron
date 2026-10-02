@@ -8024,7 +8024,7 @@ mod tests {
             Pickers::new(state, cx)
         });
         handle
-            .update(cx, |pickers, _, cx| {
+            .update(cx, |pickers, window, cx| {
                 let mut grok = bare_model("grok-4.6", "Grok 4.6");
                 grok.options = vec![ModelOption {
                     id: "fast".into(),
@@ -8054,6 +8054,19 @@ mod tests {
                 pickers.pick_option(option, next, default, cx);
                 assert!(pickers.compact_fast_choice(cx).unwrap().3);
                 assert!(!pickers.explicit_options(cx).contains_key("fast"));
+                // F on the open panel flips it the same way.
+                pickers.open.open(PickerKind::HarnessModel);
+                let key = |key: &str| KeyDownEvent {
+                    keystroke: gpui::Keystroke::parse(key).unwrap(),
+                    is_held: false,
+                    prefer_character_input: false,
+                };
+                pickers.on_key_down(&key("f"), window, cx);
+                assert!(!pickers.compact_fast_choice(cx).unwrap().3);
+                pickers.on_key_down(&key("cmd-f"), window, cx);
+                assert!(!pickers.compact_fast_choice(cx).unwrap().3);
+                pickers.on_key_down(&key("f"), window, cx);
+                assert!(pickers.compact_fast_choice(cx).unwrap().3);
             })
             .unwrap();
     }
